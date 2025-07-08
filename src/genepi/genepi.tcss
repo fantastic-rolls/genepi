@@ -1,0 +1,10 @@
+
+.border {
+    border: solid white;
+    padding: 1;
+    border-title-color: white;
+}
+
+.resource-panel {
+    height: 10;
+}
