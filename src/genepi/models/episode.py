@@ -48,6 +48,7 @@ class Episode(metaclass=Singleton):
             mandatory_extras["audio"] = "narrator"
 
         data = {
+            "name": section.name,
             "start": section.start,
             "end": section.end,
             "type": section.type.value,
@@ -72,7 +73,7 @@ class Episode(metaclass=Singleton):
             "output": self.output_directory,
             "sections": [],
             "audios": self.audio_to_dict(),
-            "template": Configuration().template,
+            "template": Configuration().after_effects_template,
             "prerender": self.prerender_file,
             "prerender_project": f"{self.prerender_file}.aep",
         }

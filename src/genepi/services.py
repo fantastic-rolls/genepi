@@ -1,9 +1,10 @@
 import re
+from collections import Counter
 from enum import Enum
 from math import ceil
 from os import listdir
 from os.path import basename, dirname, isfile, join
-from typing import Generator, Optional
+from typing import ClassVar, Generator, Optional
 
 import audio_metadata
 from typing_extensions import Self
@@ -16,13 +17,21 @@ class Sections(str, Enum):
     lobby = "lobby"
     roleplay = "roleplay"
     fight = "fight"
-    question = "question"
+    question = "questions"
     opening = "opening"
 
 
 class BaseResource:
-    def __init__(self, path: str) -> None:
+    __resource_ids: ClassVar[Counter] = Counter()
+
+    @classmethod
+    def get_id(cls) -> int:
+        cls.__resource_ids[cls.__class__.__name__] += 1
+        return cls.__resource_ids[cls.__class__.__name__]
+
+    def __init__(self, path: str, name: Optional[str] = None) -> None:
         self.path = path
+        self.name = name or f"{self.__class__.__name__}_{self.get_id()}"
 
 
 class PanelResource(BaseResource):
@@ -159,7 +168,7 @@ class AudioService(ResourceService):
 
 
 class PanelService(ResourceService):
-    pattern = re.compile("panel_(\d+:\d+:\d+)(_(\d+:\d+:\d+))?_(\d+|img).png")
+    pattern = re.compile("panel_(\d+-\d+-\d+)(_(\d+-\d+-\d+))?_(\d+|img).png")
 
     def _register(self, path: str, matches: re.Match[str]) -> None:
         start = timecode_to_seconds(matches.group(1))

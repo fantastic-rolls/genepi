@@ -19,12 +19,9 @@ dev = ["textual-dev"]
 genepi = "genepi.main:main"
 
 
-[tool.setuptools.packages.find]
-where = ["src/genepi/data"]
-
-
-[tool.setuptools.package-data]
-mypkg = ["*.conf", "*.js"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 
 [tool.ruff]

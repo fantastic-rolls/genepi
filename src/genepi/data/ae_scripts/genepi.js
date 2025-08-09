@@ -4,8 +4,11 @@ if (typeof JSON !== "object") { JSON = {} } (function () { "use strict"; var rx_
 
 
 var AUDIO_TO_KEYFRAMES_CMD_ID = 4218
+app.activate();
 
-app.project.close(CloseOptions.DO_NOT_SAVE_CHANGES);
+if (app.project) {
+    app.project.close(CloseOptions.DO_NOT_SAVE_CHANGES);
+}
 
 var cache = {}
 
@@ -18,6 +21,7 @@ if (dataFile.open("r")) {
     episode = JSON.parse(data)
     dataFile.close()
 }
+
 
 function get_resource(path) {
     if (path in cache) {
@@ -92,16 +96,17 @@ function generateGamePlay(config, title, subtitle, comp, mapping) {
     var end = config.end || 1
     var duration = end - start
     var nbPlayers = payload.players || 3
-    var subtype = payload.subtype[0].toUpperCase() + payload.subtype.slice(1)
+    var subtype = config.type[0].toUpperCase() + config.type.slice(1)
     var compNameParts = [subtype, "UI", nbPlayers, "Players"]
-    var guests = (payload.guests || []).sort()
     if ("title" in payload) {
         title = payload.title
     }
     if ("subtitle" in payload) {
         subtitle = payload.subtitle
     }
-    compNameParts = compNameParts.concat(guests)
+    if (payload.guests) {
+        compNameParts = compNameParts.push(guests)
+    }
     var roleplayComp = getComp(compNameParts.join("_"))
     roleplayComp = roleplayComp.duplicate()
     roleplayComp.duration = duration
@@ -139,10 +144,13 @@ comp.duration = episode.duration
 comp.workAreaStart = 0
 comp.workAreaDuration = comp.duration
 
+// Give the focus to viewer
+comp.openInViewer()
+
 // close all opened comps
 do {
     app.executeCommand(4)
-} while (app.project.activeItem != null && app.project.activeItem instanceof CompItem);
+} while (app.project.activeItem != null);
 
 comp.openInViewer()
 
@@ -152,7 +160,7 @@ for (var i in episode.sections) {
     var section = episode.sections[i]
     if (section.type === "lobby") {
         generateLobby(section, comp)
-    } else if (section.type in ["roleplay", "question", "fight"]) {
+    } else if (section.type === "roleplay" || section.type === "questions" || section.type === "fight") {
         generateGamePlay(section, episode.title, episode.subtitle, comp, audioMapping)
     }
 }

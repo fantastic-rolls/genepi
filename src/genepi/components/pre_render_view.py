@@ -54,7 +54,9 @@ class PreRenderScreen(Screen):
             yield Button("Launch Pre-Render", variant="primary", id="pre-render")
 
     def _trigger_pre_render(self) -> None:
-        ae_script = generate_ae_script(self.episode_file)
+        ae_script = generate_ae_script(
+            self.episode_file, script_dir=Episode().output_directory
+        )
         run_script(ae_script)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
