@@ -22,11 +22,7 @@ class Episode(metaclass=Singleton):
 
     @property
     def players(self) -> int:
-        players = 0
-        for p in self.audio_tracks:
-            if p.lower() not in ("master", "narrator"):
-                players += 1
-        return players
+        return 3
 
     @property
     def duration(self) -> float:
@@ -43,7 +39,7 @@ class Episode(metaclass=Singleton):
     def section_to_dict(self, section: SectionResource) -> dict:
         mandatory_extras = {}
         if section.type in (Sections.fight, Sections.question, Sections.roleplay):
-            mandatory_extras["players"] = self.players
+            mandatory_extras["players"] = section.get_players(self.players)
         if section.type == Sections.lobby:
             mandatory_extras["audio"] = "narrator"
 

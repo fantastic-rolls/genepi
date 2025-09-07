@@ -101,7 +101,9 @@ function generateGamePlay(config, title, subtitle, comp, mapping) {
     if ("subtitle" in payload) {
         subtitle = payload.subtitle
     }
-    compNameParts = compNameParts.concat(guests)
+    if (payload.guests) {
+        compNameParts.push(payload.guests)
+    }
     var roleplayComp = getComp(compNameParts.join("_"))
     roleplayComp = roleplayComp.duplicate()
     roleplayComp.duration = duration
@@ -109,14 +111,17 @@ function generateGamePlay(config, title, subtitle, comp, mapping) {
     layer.startTime = start
     // set titles
     var properties = layer.property("ADBE Layer Overrides")
-    properties.property(1).setValue(title)
-    properties.property(2).setValue(subtitle)
-    for (var i = 3; i < nbPlayers + 4; ++i) {
+    for (var i = 1; i < properties.numProperties; ++i) {
         var prop = properties.property(i)
-        if (prop.name.slice(0, 12) !== "Audio_Level_") continue;
-        var name = prop.name.slice(12).toLowerCase()
-        if (name in mapping) {
-            prop.expression = "thisComp.layer(\"" + mapping[name].name + "\").essentialProperty(\"Voice_Activation\")"
+        if (prop.name === "Title") {
+            prop.setValue(title)
+        } else if (prop.name === "Subtitle") {
+            prop.setValue(subtitle)
+        } else if (prop.name.slice(0, 12) === "Audio_Level_") {
+            var name = prop.name.slice(12).toLowerCase()
+            if (name in mapping) {
+                prop.expression = "thisComp.layer(\"" + mapping[name].name + "\").essentialProperty(\"Voice_Activation\")"
+            }
         }
     }
 }
@@ -152,7 +157,7 @@ for (var i in episode.sections) {
     var section = episode.sections[i]
     if (section.type === "lobby") {
         generateLobby(section, comp)
-    } else if (section.type in ["roleplay", "question", "fight"]) {
+    } else if (section.type in ["roleplay", "question", "fight", "talk"]) {
         generateGamePlay(section, episode.title, episode.subtitle, comp, audioMapping)
     }
 }
