@@ -120,6 +120,11 @@ class SectionResource(BaseResource):
     def is_tag(self) -> bool:
         return self.start == self.end
 
+    def get_players(self, base_player_count: int) -> int:
+        return base_player_count + len(
+            [g for g in self.extras.get("guests", "").split(",") if g]
+        )
+
     @classmethod
     def read_file(cls, file: str) -> list[Self]:
         sections = []
