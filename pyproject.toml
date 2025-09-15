@@ -1,7 +1,7 @@
 [project]
 name = "genepi"
 description = "Generate video episodes of Fantastic Rolls"
-version = "2025.06.00"
+version = "2025.09.00"
 requires-python = ">=3.10"
 dependencies = ["art", "audio-metadata", "textual", "textual-fspicker"]
 
