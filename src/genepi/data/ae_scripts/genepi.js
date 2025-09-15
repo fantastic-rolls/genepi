@@ -111,7 +111,7 @@ function generateGamePlay(config, title, subtitle, comp, mapping) {
     layer.startTime = start
     // set titles
     var properties = layer.property("ADBE Layer Overrides")
-    for (var i = 1; i < properties.numProperties; ++i) {
+    for (var i = 1; i <= properties.numProperties; ++i) {
         var prop = properties.property(i)
         if (prop.name === "Title") {
             prop.setValue(title)
