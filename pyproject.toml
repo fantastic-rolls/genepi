@@ -17,6 +17,7 @@ dev = ["textual-dev"]
 
 [project.scripts]
 genepi = "genepi.main:main"
+genreel = "genepi.main:main"
 
 
 [tool.setuptools.packages.find]
